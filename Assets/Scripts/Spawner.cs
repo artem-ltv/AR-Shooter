@@ -20,11 +20,18 @@ public class Spawner : MonoBehaviour
         {
             float spawnRadius = Random.Range(_minSpawnRadius, _maxSpawnRadius);
             Enemy newEnemy = Instantiate(_enemies[Random.Range(0, _enemies.Length)], GetRandomSphere(spawnRadius), Quaternion.identity);
+            newEnemy.EnemyDie += OnEnemyDying;
             Vector3 lookDirection = _player.transform.position - newEnemy.transform.position;
             newEnemy.transform.rotation = Quaternion.LookRotation(lookDirection);
 
             yield return new WaitForSeconds(_secondBetweenSpawn);
         }
+    }
+
+    private void OnEnemyDying(Enemy enemy)
+    {
+        enemy.EnemyDie -= OnEnemyDying;
+        _player.AddScore();
     }
 
     private Vector3 GetRandomSphere(float radius)
